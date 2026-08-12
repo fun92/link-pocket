@@ -71,7 +71,9 @@ export default async (req) => {
   try {
     requireSecret();
     const url = new URL(req.url);
-    const path = url.pathname.replace(/^\/\.netlify\/functions\/api/, '') || '/';
+    const path = url.pathname
+      .replace(/^\/\.netlify\/functions\/api/, '')
+      .replace(/^\/api/, '') || '/';
     const method = req.method;
     if (path === '/signup' && method === 'POST') {
       const data = await readDb(); const body = await input(req); const email = normalizeEmail(body.email);
