@@ -1,0 +1,7 @@
+.env
+data/
+.netlify/
+node_modules/
+AGENTS.md
+sources/
+.DS_Store

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#284c3a"><meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Link Pocket">
+  <meta name="description" content="나만의 안전한 링크 보관함"><title>Link Pocket — 나만의 링크 보관함</title>
+  <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="authView" class="auth-shell">
+    <section class="brand-panel"><div class="logo">LP</div><p class="eyebrow">LINK POCKET</p><h1>마음에 담은 링크를<br><em>안전하게.</em></h1><p class="intro">흘려보내기 아까운 페이지를 모으고,<br>사적인 기록은 비밀공간에 잠가두세요.</p><div class="mini-cards"><span>읽을거리</span><span>영감</span><span class="secret-chip">비밀공간</span></div></section>
+    <section class="auth-card">
+      <div id="loginPane"><p class="eyebrow">다시 만나 반가워요</p><h2>내 보관함 열기</h2><form id="loginForm"><label>이메일<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label><label>비밀번호<input name="password" type="password" autocomplete="current-password" placeholder="8자 이상" required></label><button class="primary">로그인</button></form><button class="text-btn" data-pane="recoveryPane">비밀번호를 잊으셨나요?</button><p class="switch">처음이신가요? <button data-pane="signupPane">새 계정 만들기</button></p></div>
+      <div id="signupPane" hidden><p class="eyebrow">처음 오셨군요</p><h2>새 보관함 만들기</h2><form id="signupForm"><label>이름<input name="name" placeholder="어떻게 불러드릴까요?" required></label><label>이메일<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label><label>비밀번호<input name="password" type="password" autocomplete="new-password" placeholder="8자 이상" minlength="8" required></label><button class="primary">시작하기</button></form><p class="switch">이미 계정이 있나요? <button data-pane="loginPane">로그인</button></p></div>
+      <div id="recoveryPane" hidden><p class="eyebrow">계정 복구</p><h2>비밀번호 재설정</h2><form id="recoveryRequestForm"><label>가입한 이메일<input name="email" type="email" placeholder="you@example.com" required></label><button class="primary">인증 코드 받기</button></form><form id="recoveryResetForm" hidden><label>6자리 인증 코드<input name="code" inputmode="numeric" maxlength="6" placeholder="000000" required></label><label>새 비밀번호<input name="password" type="password" minlength="8" placeholder="8자 이상" required></label><button class="primary">비밀번호 변경</button></form><p id="devCode" class="dev-code" hidden></p><p class="switch"><button data-pane="loginPane">로그인으로 돌아가기</button></p></div>
+      <p id="authMessage" class="message" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <main id="appView" class="app-shell" hidden>
+    <aside class="sidebar"><div><div class="wordmark"><span class="logo small">LP</span><strong>Link Pocket</strong></div><nav><button class="nav active" data-filter="all"><span>⌂</span>모든 링크 <b id="allCount">0</b></button><button class="nav" data-filter="favorite"><span>☆</span>즐겨찾기</button><button class="nav secret" data-filter="secret"><span>◇</span>비밀공간 <i id="lockState">잠김</i></button></nav></div><div class="profile"><div class="avatar" id="avatar">L</div><div><strong id="userName">사용자</strong><small id="userEmail"></small></div><button id="logoutBtn" title="로그아웃">↗</button></div></aside>
+    <section class="content"><header><button id="menuBtn" class="icon-btn menu">☰</button><div><p class="eyebrow" id="sectionEyebrow">MY COLLECTION</p><h2 id="sectionTitle">모든 링크</h2></div><div class="header-actions"><label class="search">⌕<input id="searchInput" placeholder="링크 검색"></label><button id="pasteBtn" class="secondary compact">붙여넣기</button><button id="addBtn" class="primary compact">＋ 링크 담기</button></div></header><div id="installHint" class="install-hint" hidden><span>아이폰 홈 화면에서 앱처럼 사용하세요.</span><button id="installGuideBtn">설치 방법</button><button id="dismissInstall" aria-label="닫기">×</button></div><div id="filterRow" class="filter-row"><button class="pill active" data-tag="all">전체</button></div><div id="linkGrid" class="link-grid"></div><div id="emptyState" class="empty" hidden><div>⌁</div><h3>아직 담아둔 링크가 없어요</h3><p>첫 번째 링크를 포켓에 넣어보세요.</p><button class="primary compact" id="emptyAddBtn">링크 담기</button></div></section>
+    <nav class="bottom-nav" aria-label="주요 메뉴"><button class="active" data-filter="all"><span>⌂</span>모든 링크</button><button data-filter="favorite"><span>☆</span>즐겨찾기</button><button class="add-fab" id="mobileAddBtn" aria-label="링크 담기">＋</button><button data-filter="secret"><span>◇</span>비밀공간</button><button id="mobileMoreBtn"><span>•••</span>더보기</button></nav>
+  </main>
+
+  <dialog id="linkDialog"><form id="linkForm" method="dialog"><div class="dialog-head"><div><p class="eyebrow">NEW LINK</p><h2>새 링크 담기</h2></div><button type="button" class="close-btn" data-close>×</button></div><label>링크 주소<input name="url" type="url" placeholder="https://..." required></label><label>제목 <small>비워두면 사이트 이름으로 저장돼요</small><input name="title" placeholder="기억하기 쉬운 제목"></label><label>메모<textarea name="note" placeholder="왜 저장했는지 짧게 적어보세요"></textarea></label><label>태그 <small>쉼표로 구분</small><input name="tags" placeholder="디자인, 나중에 읽기"></label><label class="secret-toggle"><input name="secret" type="checkbox"><span class="toggle"></span><span><strong>비밀공간에 저장</strong><small>제목, 주소, 메모를 암호화해 보관합니다.</small></span></label><button class="primary">포켓에 담기</button></form></dialog>
+  <dialog id="unlockDialog"><form id="unlockForm" method="dialog"><button type="button" class="close-btn floating" data-close>×</button><div class="lock-art">◇</div><p class="eyebrow">PRIVATE POCKET</p><h2>비밀공간 열기</h2><p>보안을 위해 계정 비밀번호를 한 번 더 확인합니다.</p><label>비밀번호<input name="password" type="password" autocomplete="current-password" required autofocus></label><button class="primary">잠금 해제</button><small>3분 동안 활동이 없으면 자동으로 잠겨요.</small></form></dialog>
+  <dialog id="installDialog"><div class="guide"><button type="button" class="close-btn floating" data-close>×</button><img class="install-icon" src="icons/icon-192.png" alt="Link Pocket 아이콘"><p class="eyebrow">ADD TO HOME SCREEN</p><h2>아이폰에 설치하기</h2><ol><li>Safari 아래쪽의 <strong>공유 버튼</strong>을 누르세요.</li><li><strong>홈 화면에 추가</strong>를 선택하세요.</li><li>오른쪽 위의 <strong>추가</strong>를 누르면 끝!</li></ol><p class="guide-note">Safari에서 HTTPS 주소로 접속했을 때 사용할 수 있어요.</p></div></dialog>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script>
+</body></html>

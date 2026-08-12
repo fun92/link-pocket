@@ -1,0 +1,14 @@
+{
+  "name": "Link Pocket — 나만의 링크 보관함",
+  "short_name": "Link Pocket",
+  "description": "일반 링크와 암호화된 비밀 링크를 안전하게 관리합니다.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f4ed",
+  "theme_color": "#284c3a",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

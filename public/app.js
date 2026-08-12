@@ -1,0 +1,47 @@
+const $ = s => document.querySelector(s); const $$ = s => [...document.querySelectorAll(s)];
+const state = { token: localStorage.getItem('lp-session'), vaultToken: null, user: null, links: [], filter: 'all', tag: 'all', secretUnlocked: false, lockTimer: null };
+const api = async (path, options = {}) => {
+  const response = await fetch(path, { ...options, headers: { 'Content-Type': 'application/json', ...(state.token ? { Authorization: `Bearer ${state.token}` } : {}), ...(state.vaultToken ? { 'X-Vault-Token': state.vaultToken } : {}), ...options.headers } });
+  const data = await response.json(); if (!response.ok) throw new Error(data.error || '요청을 처리하지 못했습니다.'); return data;
+};
+function notify(message){ const el=$('#toast'); el.textContent=message; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2200); }
+function authMessage(message=''){ $('#authMessage').textContent=message; }
+function showPane(id){ ['loginPane','signupPane','recoveryPane'].forEach(x=>$('#'+x).hidden=x!==id); authMessage(); }
+$$('[data-pane]').forEach(b=>b.addEventListener('click',()=>showPane(b.dataset.pane)));
+
+async function authenticate(path, form){ const values=Object.fromEntries(new FormData(form)); const data=await api(path,{method:'POST',body:JSON.stringify(values)}); state.token=data.token; state.user=data.user; localStorage.setItem('lp-session',state.token); await enterApp(); }
+$('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{await authenticate('/api/login',e.currentTarget)}catch(x){authMessage(x.message)}});
+$('#signupForm').addEventListener('submit',async e=>{e.preventDefault();try{await authenticate('/api/signup',e.currentTarget)}catch(x){authMessage(x.message)}});
+$('#recoveryRequestForm').addEventListener('submit',async e=>{e.preventDefault();try{const email=e.currentTarget.email.value;const data=await api('/api/recovery/request',{method:'POST',body:JSON.stringify({email})});$('#recoveryResetForm').hidden=false;$('#recoveryResetForm').dataset.email=email;authMessage(data.message);if(data.devCode){$('#devCode').hidden=false;$('#devCode').textContent=`개발용 인증 코드: ${data.devCode}`}}catch(x){authMessage(x.message)}});
+$('#recoveryResetForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('/api/recovery/reset',{method:'POST',body:JSON.stringify({email:e.currentTarget.dataset.email,code:e.currentTarget.code.value,password:e.currentTarget.password.value})});showPane('loginPane');authMessage('비밀번호가 변경되었습니다. 새 비밀번호로 로그인하세요.')}catch(x){authMessage(x.message)}});
+
+async function enterApp(){ $('#authView').hidden=true;$('#appView').hidden=false;$('#userName').textContent=state.user.name;$('#userEmail').textContent=state.user.email;$('#avatar').textContent=state.user.name[0].toUpperCase();await loadLinks();openPendingShare(); }
+async function loadLinks(){ const suffix=state.secretUnlocked?'?reveal=secret':'';state.links=(await api('/api/links'+suffix)).links;render(); }
+function domainOf(url){try{return new URL(url).hostname.replace(/^www\./,'')}catch{return ''}}
+function escapeHtml(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function filtered(){const q=$('#searchInput').value.trim().toLowerCase();return state.links.filter(l=>{if(l.locked)return false;if(state.filter==='favorite'&&!l.favorite)return false;if(state.filter==='secret'&&!l.secret)return false;if(state.filter!=='secret'&&state.filter!=='all'&&state.filter!=='favorite')return false;if(state.tag!=='all'&&!l.tags.includes(state.tag))return false;return !q||[l.title,l.url,l.note,...l.tags].join(' ').toLowerCase().includes(q)})}
+function render(){const visible=filtered();$('#allCount').textContent=state.links.filter(l=>!l.secret).length;const tags=[...new Set(state.links.filter(l=>!l.locked).flatMap(l=>l.tags))];$('#filterRow').innerHTML=['all',...tags].map(t=>`<button class="pill ${state.tag===t?'active':''}" data-tag="${escapeHtml(t)}">${t==='all'?'전체':escapeHtml(t)}</button>`).join('');$$('[data-tag]').forEach(b=>b.onclick=()=>{state.tag=b.dataset.tag;render()});$('#linkGrid').innerHTML=visible.map(l=>`<article class="link-card"><div class="card-top"><div class="domain"><span class="favicon">${escapeHtml(domainOf(l.url)[0]?.toUpperCase()||'L')}</span><span>${escapeHtml(domainOf(l.url))}</span>${l.secret?'<span class="secret-badge">◇ 비밀</span>':''}</div><div class="card-actions"><button class="fav ${l.favorite?'active':''}" data-fav="${l.id}" title="즐겨찾기">★</button><button data-delete="${l.id}" title="삭제">×</button></div></div><h3><a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(l.title)}</a></h3><p class="note">${escapeHtml(l.note||'메모가 없습니다.')}</p><div class="tags">${l.tags.map(t=>`<span>#${escapeHtml(t)}</span>`).join('')}</div></article>`).join('');$('#emptyState').hidden=visible.length!==0;$$('[data-fav]').forEach(b=>b.onclick=()=>toggleFav(b.dataset.fav));$$('[data-delete]').forEach(b=>b.onclick=()=>removeLink(b.dataset.delete));}
+async function toggleFav(id){const link=state.links.find(l=>l.id===id);await api('/api/links/'+id,{method:'PATCH',body:JSON.stringify({favorite:!link.favorite})});await loadLinks()}
+async function removeLink(id){if(!confirm('이 링크를 삭제할까요?'))return;await api('/api/links/'+id,{method:'DELETE'});await loadLinks();notify('링크를 삭제했습니다.')}
+function setFilter(filter){state.filter=filter;state.tag='all';$$('[data-filter]').forEach(n=>n.classList.toggle('active',n.dataset.filter===filter));const titles={all:['MY COLLECTION','모든 링크'],favorite:['SAVED FAVORITES','즐겨찾기'],secret:['PRIVATE POCKET','비밀공간']};[$('#sectionEyebrow').textContent,$('#sectionTitle').textContent]=titles[filter];render();}
+$$('[data-filter]').forEach(n=>n.addEventListener('click',()=>{if(n.dataset.filter==='secret'&&!state.secretUnlocked){$('#unlockDialog').showModal();return}setFilter(n.dataset.filter);$('.sidebar').classList.remove('open')}));
+$('#searchInput').addEventListener('input',render);$('#menuBtn').onclick=()=>$('.sidebar').classList.toggle('open');
+function openAdd(url=''){const form=$('#linkForm');form.reset();if(url)form.url.value=url;$('#linkDialog').showModal();if(url)form.title.focus();}
+$('#addBtn').onclick=()=>openAdd();$('#mobileAddBtn').onclick=()=>openAdd();$('#emptyAddBtn').onclick=()=>openAdd();$$('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
+$('#pasteBtn').onclick=async()=>{try{const text=await navigator.clipboard.readText();const url=new URL(text);if(!['http:','https:'].includes(url.protocol))throw new Error();openAdd(url.href)}catch{notify('복사한 링크를 읽지 못했어요. 직접 붙여넣어 주세요.')}};
+$('#mobileMoreBtn').onclick=()=>$('.sidebar').classList.add('open');
+$('#installGuideBtn').onclick=()=>$('#installDialog').showModal();
+$('#dismissInstall').onclick=()=>{localStorage.setItem('lp-install-hint','hidden');$('#installHint').hidden=true};
+$('#linkForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,v=Object.fromEntries(new FormData(f));v.secret=f.secret.checked;v.tags=v.tags.split(',').map(x=>x.trim()).filter(Boolean);try{await api('/api/links',{method:'POST',body:JSON.stringify(v)});f.reset();$('#linkDialog').close();await loadLinks();notify(v.secret?'비밀공간에 안전하게 담았습니다.':'링크를 포켓에 담았습니다.')}catch(x){notify(x.message)}});
+function armLock(){clearTimeout(state.lockTimer);state.lockTimer=setTimeout(lockSecret,3*60*1000)}
+function lockSecret(){state.secretUnlocked=false;state.vaultToken=null;$('#lockState').textContent='잠김';if(state.filter==='secret')setFilter('all');loadLinks();notify('비밀공간이 자동으로 잠겼습니다.')}
+$('#unlockForm').addEventListener('submit',async e=>{e.preventDefault();const password=e.currentTarget.password.value;try{const result=await api('/api/vault/unlock',{method:'POST',body:JSON.stringify({password})});state.vaultToken=result.vaultToken;state.secretUnlocked=true;$('#lockState').textContent='열림';e.currentTarget.reset();$('#unlockDialog').close();await loadLinks();setFilter('secret');armLock()}catch(x){notify('비밀번호가 맞지 않습니다.')}});
+['click','keydown'].forEach(event=>document.addEventListener(event,()=>{if(state.secretUnlocked)armLock()}));
+$('#logoutBtn').onclick=()=>{state.token=null;state.user=null;localStorage.removeItem('lp-session');location.reload()};
+function consumeSharedUrl(){const params=new URLSearchParams(location.search);const shared=params.get('url')||params.get('text');if(!shared)return;try{const match=shared.match(/https?:\/\/\S+/);if(match)sessionStorage.setItem('lp-shared-url',match[0])}finally{history.replaceState({},'',location.pathname)}}
+function openPendingShare(){const shared=sessionStorage.getItem('lp-shared-url');if(shared&&state.user){sessionStorage.removeItem('lp-shared-url');openAdd(shared)}}
+consumeSharedUrl();
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js'));
+const standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+if(!standalone&&localStorage.getItem('lp-install-hint')!=='hidden')$('#installHint').hidden=false;
+(async()=>{if(!state.token)return;try{state.user=(await api('/api/me')).user;await enterApp()}catch{localStorage.removeItem('lp-session');state.token=null}})();
