@@ -1,0 +1,16 @@
+/* State and iPhone-specific corrections loaded after the main stylesheet. */
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 700px) {
+  input,
+  textarea {
+    font-size: 16px;
+  }
+
+  .auth-shell[hidden],
+  .app-shell[hidden] {
+    display: none !important;
+  }
+}
