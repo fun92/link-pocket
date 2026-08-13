@@ -23,9 +23,22 @@
   <key>WFWorkflowActions</key>
   <array>
     <dict>
+      <key>WFWorkflowActionIdentifier</key><string>is.workflow.actions.geturlsofinput</string>
+      <key>WFWorkflowActionParameters</key>
+      <dict>
+        <key>UUID</key><string>1D3B8B6A-E9C5-4C0B-A563-B73E28C7F121</string>
+        <key>WFInput</key>
+        <dict>
+          <key>WFSerializationType</key><string>WFTextTokenAttachment</string>
+          <key>Value</key><dict><key>Type</key><string>ExtensionInput</string></dict>
+        </dict>
+      </dict>
+    </dict>
+    <dict>
       <key>WFWorkflowActionIdentifier</key><string>is.workflow.actions.url</string>
       <key>WFWorkflowActionParameters</key>
       <dict>
+        <key>UUID</key><string>8E1E61F3-055A-4A54-A062-655060ED2052</string>
         <key>WFURLActionURL</key>
         <dict>
           <key>WFSerializationType</key><string>WFTextTokenString</string>
@@ -35,7 +48,11 @@
             <key>attachmentsByRange</key>
             <dict>
               <key>{38, 1}</key>
-              <dict><key>Type</key><string>ExtensionInput</string></dict>
+              <dict>
+                <key>Type</key><string>ActionOutput</string>
+                <key>OutputUUID</key><string>1D3B8B6A-E9C5-4C0B-A563-B73E28C7F121</string>
+                <key>OutputName</key><string>URLs</string>
+              </dict>
             </dict>
           </dict>
         </dict>
@@ -43,7 +60,19 @@
     </dict>
     <dict>
       <key>WFWorkflowActionIdentifier</key><string>is.workflow.actions.openurl</string>
-      <key>WFWorkflowActionParameters</key><dict/>
+      <key>WFWorkflowActionParameters</key>
+      <dict>
+        <key>WFInput</key>
+        <dict>
+          <key>WFSerializationType</key><string>WFTextTokenAttachment</string>
+          <key>Value</key>
+          <dict>
+            <key>Type</key><string>ActionOutput</string>
+            <key>OutputUUID</key><string>8E1E61F3-055A-4A54-A062-655060ED2052</string>
+            <key>OutputName</key><string>URL</string>
+          </dict>
+        </dict>
+      </dict>
     </dict>
   </array>
 </dict>
