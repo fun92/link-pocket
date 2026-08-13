@@ -12,10 +12,10 @@
   <main id="authView" class="auth-shell">
     <section class="brand-panel"><div class="logo">LP</div><p class="eyebrow">LINK POCKET</p><h1>마음에 담은 링크를<br><em>안전하게.</em></h1><p class="intro">흘려보내기 아까운 페이지를 모으고,<br>사적인 기록은 비밀공간에 잠가두세요.</p><div class="mini-cards"><span>읽을거리</span><span>영감</span><span class="secret-chip">비밀공간</span></div></section>
     <section class="auth-card">
+      <p id="authMessage" class="message auth-message" aria-live="polite"></p>
       <div id="loginPane"><p class="eyebrow">다시 만나 반가워요</p><h2>내 보관함 열기</h2><form id="loginForm"><label>이메일<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label><label>비밀번호<input name="password" type="password" autocomplete="current-password" placeholder="8자 이상" required></label><button class="primary">로그인</button></form><button class="text-btn" data-pane="recoveryPane">비밀번호를 잊으셨나요?</button><p class="switch">처음이신가요? <button data-pane="signupPane">새 계정 만들기</button></p></div>
       <div id="signupPane" hidden><p class="eyebrow">처음 오셨군요</p><h2>새 보관함 만들기</h2><form id="signupForm"><label>이름<input name="name" placeholder="어떻게 불러드릴까요?" required></label><label>이메일<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label><label>비밀번호<input name="password" type="password" autocomplete="new-password" placeholder="8자 이상" minlength="8" required></label><button class="primary">시작하기</button></form><p class="switch">이미 계정이 있나요? <button data-pane="loginPane">로그인</button></p></div>
       <div id="recoveryPane" hidden><p class="eyebrow">계정 복구</p><h2>비밀번호 재설정</h2><form id="recoveryRequestForm"><label>가입한 이메일<input name="email" type="email" placeholder="you@example.com" required></label><button class="primary">인증 코드 받기</button></form><form id="recoveryResetForm" hidden><label>6자리 인증 코드<input name="code" inputmode="numeric" maxlength="6" placeholder="000000" required></label><label>새 비밀번호<input name="password" type="password" minlength="8" placeholder="8자 이상" required></label><button class="primary">비밀번호 변경</button></form><p id="devCode" class="dev-code" hidden></p><p class="switch"><button data-pane="loginPane">로그인으로 돌아가기</button></p></div>
-      <p id="authMessage" class="message" aria-live="polite"></p>
     </section>
   </main>
 

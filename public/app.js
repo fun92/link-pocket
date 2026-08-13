@@ -5,13 +5,13 @@ const api = async (path, options = {}) => {
   const data = await response.json(); if (!response.ok) throw new Error(data.error || '요청을 처리하지 못했습니다.'); return data;
 };
 function notify(message){ const el=$('#toast'); el.textContent=message; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2200); }
-function authMessage(message=''){ $('#authMessage').textContent=message; }
+function authMessage(message='', kind='error'){const el=$('#authMessage');el.textContent=message;el.dataset.kind=kind;el.hidden=!message;}
 function showPane(id){ ['loginPane','signupPane','recoveryPane'].forEach(x=>$('#'+x).hidden=x!==id); authMessage(); }
 $$('[data-pane]').forEach(b=>b.addEventListener('click',()=>showPane(b.dataset.pane)));
 
-async function authenticate(path, form){ const values=Object.fromEntries(new FormData(form)); const data=await api(path,{method:'POST',body:JSON.stringify(values)}); state.token=data.token; state.user=data.user; localStorage.setItem('lp-session',state.token); await enterApp(); }
-$('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{await authenticate('/api/login',e.currentTarget)}catch(x){authMessage(x.message)}});
-$('#signupForm').addEventListener('submit',async e=>{e.preventDefault();try{await authenticate('/api/signup',e.currentTarget)}catch(x){authMessage(x.message)}});
+async function authenticate(path,form){const button=form.querySelector('button[type="submit"],button:not([type])');const original=button.textContent;button.disabled=true;button.textContent=path==='/api/login'?'확인 중…':'만드는 중…';authMessage();try{const values=Object.fromEntries(new FormData(form));const data=await api(path,{method:'POST',body:JSON.stringify(values)});state.token=data.token;state.user=data.user;localStorage.setItem('lp-session',state.token);authMessage('로그인되었습니다. 보관함을 여는 중…','success');location.reload()}finally{button.disabled=false;button.textContent=original}}
+$('#loginForm').addEventListener('submit',async e=>{e.preventDefault();try{await authenticate('/api/login',e.currentTarget)}catch(x){authMessage(x.message);$('#authMessage').scrollIntoView({behavior:'smooth',block:'center'})}});
+$('#signupForm').addEventListener('submit',async e=>{e.preventDefault();try{await authenticate('/api/signup',e.currentTarget)}catch(x){authMessage(x.message);$('#authMessage').scrollIntoView({behavior:'smooth',block:'center'})}});
 $('#recoveryRequestForm').addEventListener('submit',async e=>{e.preventDefault();try{const email=e.currentTarget.email.value;const data=await api('/api/recovery/request',{method:'POST',body:JSON.stringify({email})});$('#recoveryResetForm').hidden=false;$('#recoveryResetForm').dataset.email=email;authMessage(data.message);if(data.devCode){$('#devCode').hidden=false;$('#devCode').textContent=`개발용 인증 코드: ${data.devCode}`}}catch(x){authMessage(x.message)}});
 $('#recoveryResetForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('/api/recovery/reset',{method:'POST',body:JSON.stringify({email:e.currentTarget.dataset.email,code:e.currentTarget.code.value,password:e.currentTarget.password.value})});showPane('loginPane');authMessage('비밀번호가 변경되었습니다. 새 비밀번호로 로그인하세요.')}catch(x){authMessage(x.message)}});
 
