@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>WFWorkflowClientRelease</key><string>3.0</string>
+  <key>WFWorkflowClientVersion</key><string>3300.0</string>
+  <key>WFWorkflowMinimumClientVersion</key><integer>900</integer>
+  <key>WFWorkflowHasOutputFallback</key><false/>
+  <key>WFWorkflowIcon</key>
+  <dict>
+    <key>WFWorkflowIconGlyphNumber</key><integer>59735</integer>
+    <key>WFWorkflowIconStartColor</key><integer>431817727</integer>
+  </dict>
+  <key>WFWorkflowImportQuestions</key><array/>
+  <key>WFWorkflowInputContentItemClasses</key>
+  <array>
+    <string>WFURLContentItem</string>
+    <string>WFSafariWebPageContentItem</string>
+  </array>
+  <key>WFWorkflowOutputContentItemClasses</key><array/>
+  <key>WFWorkflowTypes</key><array><string>ActionExtension</string></array>
+  <key>WFQuickActionSurfaces</key><array/>
+  <key>WFWorkflowActions</key>
+  <array>
+    <dict>
+      <key>WFWorkflowActionIdentifier</key><string>is.workflow.actions.url</string>
+      <key>WFWorkflowActionParameters</key>
+      <dict>
+        <key>WFURLActionURL</key>
+        <dict>
+          <key>WFSerializationType</key><string>WFTextTokenString</string>
+          <key>Value</key>
+          <dict>
+            <key>string</key><string>https://funkpocket.netlify.app/#share=￼</string>
+            <key>attachmentsByRange</key>
+            <dict>
+              <key>{38, 1}</key>
+              <dict><key>Type</key><string>ExtensionInput</string></dict>
+            </dict>
+          </dict>
+        </dict>
+      </dict>
+    </dict>
+    <dict>
+      <key>WFWorkflowActionIdentifier</key><string>is.workflow.actions.openurl</string>
+      <key>WFWorkflowActionParameters</key><dict/>
+    </dict>
+  </array>
+</dict>
+</plist>

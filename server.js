@@ -151,7 +151,7 @@ async function api(req, res, route) {
   } catch (error) { console.error(error); return json(res, 500, { error: '처리 중 문제가 생겼습니다.' }); }
 }
 
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.webmanifest': 'application/manifest+json' };
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.webmanifest': 'application/manifest+json', '.shortcut': 'application/octet-stream' };
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`); if (url.pathname.startsWith('/api/')) return api(req, res, url.pathname);
   const requested = url.pathname === '/' ? '/index.html' : url.pathname; const file = path.normalize(path.join(PUBLIC, requested));

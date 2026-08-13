@@ -3,6 +3,34 @@
   display: none !important;
 }
 
+.guide hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 25px 0;
+}
+
+.guide h3 {
+  font-family: Georgia, "Noto Serif KR", serif;
+  font-size: 21px;
+}
+
+.guide > p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.shortcut-button {
+  display: block;
+  margin: 18px 0;
+  padding: 15px 20px;
+  border-radius: 10px;
+  background: var(--green);
+  color: white;
+  font-weight: 800;
+  text-decoration: none;
+}
+
 @media (max-width: 700px) {
   input,
   textarea {
